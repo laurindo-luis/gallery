@@ -131,10 +131,8 @@ public class MainActivity extends AppCompatActivity {
             ).show();
         });
 
-       String key = "DefaultEndpointsProtocol=https;AccountName=storageimgbrforce;" +
-                        "AccountKey=Kr2omT3hzzzUnowjxAsYjFDc5WFVygmPAUudJ7ywHVlHL8hHEbovavstgnxc0lcOygsUJlHMKh4e+AStsqb9vw==;" +
-                        "EndpointSuffix=core.windows.net";
-        String containerName = "conteinerimgbrforce";
+        String key = "";
+        String containerName = "";
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(() -> {
