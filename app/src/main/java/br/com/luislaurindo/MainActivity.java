@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -48,6 +50,7 @@ import br.com.luislaurindo.azure.AzureStorage;
 import br.com.luislaurindo.gallery.ImageViewActivity;
 import br.com.luislaurindo.gallery.adapter.Image;
 import br.com.luislaurindo.gallery.adapter.ImagesAdapter;
+import br.com.luislaurindo.utils.BitmapUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -128,8 +131,10 @@ public class MainActivity extends AppCompatActivity {
             ).show();
         });
 
-        String key = "";
-        String containerName = "";
+       String key = "DefaultEndpointsProtocol=https;AccountName=storageimgbrforce;" +
+                        "AccountKey=Kr2omT3hzzzUnowjxAsYjFDc5WFVygmPAUudJ7ywHVlHL8hHEbovavstgnxc0lcOygsUJlHMKh4e+AStsqb9vw==;" +
+                        "EndpointSuffix=core.windows.net";
+        String containerName = "conteinerimgbrforce";
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(() -> {
@@ -249,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
             }
     );
 
+    @SuppressLint("NotifyDataSetChanged")
     private void deleteImages(List<Image> imageSelectedList) {
         List<Image> images = imagesAdapter.getImageList()
                 .stream()
@@ -305,7 +311,9 @@ public class MainActivity extends AppCompatActivity {
                 int finalCountSucessUpload = countSucessUpload + 1;
                 handler.post(() -> uploadProgress(finalCountSucessUpload, files.size()));
                 try {
-                    AzureStorage.upload(cloudBlobContainer, file);
+                    String fileName =  file.getName().replaceAll("\\.jpg|\\.jpeg|\\.bmp|\\.png", ".webp");
+                    Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromFile(file.getAbsolutePath(), 1280, 720);
+                    AzureStorage.upload(cloudBlobContainer, BitmapUtils.getInputStream(bitmap, 50), fileName);
                     handler.post(() -> uploadProgressBar(finalCountSucessUpload, files.size()));
                     countSucessUpload++;
                 } catch (URISyntaxException | StorageException | IOException e) {
