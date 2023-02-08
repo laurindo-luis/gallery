@@ -2,11 +2,6 @@ package br.com.luislaurindo.gallery.adapter;
 
 import static java.util.Objects.nonNull;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import androidx.exifinterface.media.ExifInterface;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +10,10 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.IOException;
 import java.util.List;
 
 import br.com.luislaurindo.R;
-import br.com.luislaurindo.utils.BitmapUtils;
+
 
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
 
@@ -83,13 +77,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
             viewHolder.flagSelected.setVisibility(View.GONE);
         }
 
-        Uri imageUri = Uri.fromFile(image.getFile());
-        try {
-            Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromFile(imageUri.getPath(), 200, 200);
-            viewHolder.image.setImageBitmap(bitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        viewHolder.image.setImageBitmap(image.getBitmap());
 
         if(nonNull(onClickListener)) {
             viewHolder.itemView.setOnClickListener(v -> onClickListener.onClick(viewHolder.itemView, position));

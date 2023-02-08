@@ -33,13 +33,11 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -131,18 +129,18 @@ public class MainActivity extends AppCompatActivity {
             ).show();
         });
 
-        String key = "";
-        String containerName = "";
-
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(() -> {
-            try {
-                CloudBlobClient cloudBlobClient = AzureStorage.connect(key);
-                cloudBlobContainer = AzureStorage.getCloudBlobContainer(cloudBlobClient, containerName);
-            } catch (URISyntaxException | InvalidKeyException | StorageException e) {
-                e.printStackTrace();
-            }
-        });
+//        String key = "";
+//        String containerName = "";
+//
+//        ExecutorService executorService = Executors.newSingleThreadExecutor();
+//        executorService.execute(() -> {
+//            try {
+//                CloudBlobClient cloudBlobClient = AzureStorage.connect(key);
+//                cloudBlobContainer = AzureStorage.getCloudBlobContainer(cloudBlobClient, containerName);
+//            } catch (URISyntaxException | InvalidKeyException | StorageException e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 
     @Override
@@ -237,7 +235,14 @@ public class MainActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if(result.getResultCode() == Activity.RESULT_OK) {
-                    imagesAdapter.addImage(new Image(imageOutput));
+                    Image image = new Image(imageOutput);
+                    try {
+                        Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromFile(imageOutput.getAbsolutePath(), 200, 200);
+                        image.setBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    imagesAdapter.addImage(image);
                     openCamera();
                 }
             }
